@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIVideogames.Services
 {
-    public class PlatformService(ApplicationDbContext context) : IPlatformRepository
+    public class VideogamesService(ApplicationDbContext context) : IVideogameRepository
     {
         private readonly ApplicationDbContext context = context;
 
-        public async Task<bool> PostPlatform(Platform platform)
+        public async Task<bool> PostVideogame(Videogame videogame)
         {
             try
             {
-                context.Add(platform);
+                context.Add(videogame);
                 await context.SaveChangesAsync();
                 return true;
             }
@@ -24,28 +24,33 @@ namespace APIVideogames.Services
             }
         }
 
-        public async Task<IEnumerable<Platform>> GetPlatforms()
+        public async Task<bool> PlatformExist(Videogame videogame)
         {
-            return await context.Platforms.ToListAsync();
+            return await context.Platforms.AnyAsync(pf => pf.Id == videogame.PlatformId);
         }
 
-        public async Task<Platform?> GetPlatformById(int id)
+        public async Task<IEnumerable<Videogame>> GetVideogames()
         {
-            return await context.Platforms
-                .Include(platform => platform.Videogames)
-                .FirstOrDefaultAsync(platform => platform.Id == id);
+            return await context.Videogames.ToListAsync();
         }
 
-        public async Task<bool> PutPlatform(int id, Platform platform)
+        public async Task<Videogame?> GetVideogameById(int id)
+        {
+            return await context.Videogames
+                .Include(vg => vg.Platform)
+                .FirstOrDefaultAsync(vg => vg.Id == id);
+        }
+
+        public async Task<bool> PutVideogame(int id, Videogame videogame)
         {
             try
             {
-                if (id != platform.Id)
+                if (id != videogame.Id)
                 {
                     return false;
                 }
 
-                context.Update(platform);
+                context.Update(videogame);
                 await context.SaveChangesAsync();
                 return true;
             }
@@ -56,11 +61,11 @@ namespace APIVideogames.Services
             }
         }
 
-        public async Task<bool> DeletePlatform(Platform platform)
+        public async Task<bool> DeleteVideogame(Videogame videogame)
         {
             try
             {
-                context.Remove(platform);
+                context.Remove(videogame);
                 await context.SaveChangesAsync();
                 return true;
             }

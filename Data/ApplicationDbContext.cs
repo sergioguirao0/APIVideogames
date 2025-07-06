@@ -6,5 +6,6 @@ namespace APIVideogames.Data
     public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<Platform> Platforms { get; set; }
+        public DbSet<Videogame> Videogames { get; set; }
     }
 }

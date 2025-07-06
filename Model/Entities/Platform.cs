@@ -8,5 +8,9 @@ namespace APIVideogames.Model.Entities
 
         [Required]
         public required string Name { get; set; }
+
+        public int ReleaseYear { get; set; }
+
+        public List<Videogame> Videogames { get; set; } = [];
     }
 }
