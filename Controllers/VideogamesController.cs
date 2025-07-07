@@ -17,7 +17,8 @@ namespace APIVideogames.Controllers
 
             if (!platformExist)
             {
-                return BadRequest($"La plataforma de {videogame.PlatformId} no existe");
+                ModelState.AddModelError(nameof(videogame.PlatformId), $"La plataforma de {videogame.PlatformId} no existe");
+                return ValidationProblem();
             }
 
             bool canPost = await videogameService.PostVideogame(videogame);
@@ -56,7 +57,8 @@ namespace APIVideogames.Controllers
 
             if (!platformExist)
             {
-                return BadRequest($"La plataforma de {videogame.PlatformId} no existe");
+                ModelState.AddModelError(nameof(videogame.PlatformId), $"La plataforma de {videogame.PlatformId} no existe");
+                return ValidationProblem();
             }
 
             bool canPut = await videogameService.PutVideogame(id, videogame);

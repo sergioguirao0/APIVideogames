@@ -1,13 +1,15 @@
 ﻿using APIVideogames.Data;
 using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
+using APIVideogames.Resources.Strings;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIVideogames.Services
 {
-    public class VideogamesService(ApplicationDbContext context) : IVideogameRepository
+    public class VideogamesService(ApplicationDbContext context, ILogger<VideogamesService> logger) : IVideogameRepository
     {
         private readonly ApplicationDbContext context = context;
+        private readonly ILogger<VideogamesService> logger = logger;
 
         public async Task<bool> PostVideogame(Videogame videogame)
         {
@@ -19,7 +21,7 @@ namespace APIVideogames.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                logger.LogError(ApiStrings.PostVideogameError + e.Message);
                 return false;
             }
         }
@@ -31,7 +33,9 @@ namespace APIVideogames.Services
 
         public async Task<IEnumerable<Videogame>> GetVideogames()
         {
-            return await context.Videogames.ToListAsync();
+            return await context.Videogames
+                .Include(vg => vg.Platform)
+                .ToListAsync();
         }
 
         public async Task<Videogame?> GetVideogameById(int id)
@@ -56,7 +60,7 @@ namespace APIVideogames.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                logger.LogError(ApiStrings.PutVideogameError + e.Message);
                 return false;
             }
         }
@@ -71,7 +75,7 @@ namespace APIVideogames.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                logger.LogError(ApiStrings.DeleteVideogameError + e.Message);
                 return false;
             }
         }

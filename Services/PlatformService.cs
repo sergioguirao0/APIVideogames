@@ -1,13 +1,15 @@
 ﻿using APIVideogames.Data;
 using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
+using APIVideogames.Resources.Strings;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIVideogames.Services
 {
-    public class PlatformService(ApplicationDbContext context) : IPlatformRepository
+    public class PlatformService(ApplicationDbContext context, ILogger<PlatformService> logger) : IPlatformRepository
     {
         private readonly ApplicationDbContext context = context;
+        private readonly ILogger<PlatformService> logger = logger;
 
         public async Task<bool> PostPlatform(Platform platform)
         {
@@ -19,14 +21,16 @@ namespace APIVideogames.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                logger.LogError(ApiStrings.PostPlatformError + e.Message);
                 return false;
             }
         }
 
         public async Task<IEnumerable<Platform>> GetPlatforms()
         {
-            return await context.Platforms.ToListAsync();
+            return await context.Platforms
+                .Include(platform => platform.Videogames)
+                .ToListAsync();
         }
 
         public async Task<Platform?> GetPlatformById(int id)
@@ -51,7 +55,7 @@ namespace APIVideogames.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                logger.LogError(ApiStrings.PutPlatformError + e.Message);
                 return false;
             }
         }
@@ -66,7 +70,7 @@ namespace APIVideogames.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: " + e.Message);
+                logger.LogError(ApiStrings.DeletePlatformError + e.Message);
                 return false;
             }
         }
