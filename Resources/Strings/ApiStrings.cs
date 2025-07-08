@@ -8,6 +8,10 @@
         public const string RangeValidation = "El campo {0} debe estar entre {1} y {2}";
         public const string FirstCharValidation = "La primera letra debe ser mayúscula";
 
+        // Routes
+        public const string CreatedPlatform = "GetPlatform";
+        public const string CreatedVideogame = "GetVideogame";
+
         // Logs
         public const string PostVideogameError = "Error al realizar la petición Post de la clase Videogame: ";
         public const string PostPlatformError = "Error al realizar la petición Post de la clase Platform: ";

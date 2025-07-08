@@ -9,7 +9,7 @@ namespace APIVideogames.Model.Entities
         public int Id { get; set; }
 
         [Required(ErrorMessage = ApiStrings.RequiredField)]
-        [StringLength(50, ErrorMessage = ApiStrings.StringLenght)]
+        [StringLength(100, ErrorMessage = ApiStrings.StringLenght)]
         [FirstCharUpperCase]
         public required string Name { get; set; }
 

@@ -1,15 +1,18 @@
 ﻿using APIVideogames.Data;
+using APIVideogames.Model.Dtos;
 using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
 using APIVideogames.Resources.Strings;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIVideogames.Services
 {
-    public class PlatformService(ApplicationDbContext context, ILogger<PlatformService> logger) : IPlatformRepository
+    public class PlatformService(ApplicationDbContext context, ILogger<PlatformService> logger, IMapper mapper) : IPlatformRepository
     {
         private readonly ApplicationDbContext context = context;
         private readonly ILogger<PlatformService> logger = logger;
+        private readonly IMapper mapper = mapper;
 
         public async Task<bool> PostPlatform(Platform platform)
         {
@@ -26,11 +29,11 @@ namespace APIVideogames.Services
             }
         }
 
-        public async Task<IEnumerable<Platform>> GetPlatforms()
+        public async Task<IEnumerable<PlatformDto>> GetPlatforms()
         {
-            return await context.Platforms
-                .Include(platform => platform.Videogames)
-                .ToListAsync();
+            var platforms = await context.Platforms.ToListAsync();
+            var platformsList = mapper.Map<IEnumerable<PlatformDto>>(platforms);
+            return platformsList;
         }
 
         public async Task<Platform?> GetPlatformById(int id)
@@ -40,15 +43,20 @@ namespace APIVideogames.Services
                 .FirstOrDefaultAsync(platform => platform.Id == id);
         }
 
+        public PlatformDto GetPlatformDto(Platform platform)
+        {
+            return mapper.Map<PlatformDto>(platform);
+        }
+
+        public Platform GetPlatformCreation(PlatformCreationDto platformPostDto)
+        {
+            return mapper.Map<Platform>(platformPostDto);
+        }
+
         public async Task<bool> PutPlatform(int id, Platform platform)
         {
             try
             {
-                if (id != platform.Id)
-                {
-                    return false;
-                }
-
                 context.Update(platform);
                 await context.SaveChangesAsync();
                 return true;

@@ -2,12 +2,10 @@
 using APIVideogames.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace APIVideogames.Model.Entities
+namespace APIVideogames.Model.Dtos
 {
-    public class Platform
+    public class PlatformCreationDto
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = ApiStrings.RequiredField)]
         [StringLength(50, ErrorMessage = ApiStrings.StringLenght)]
         [FirstCharUpperCase]
@@ -15,7 +13,5 @@ namespace APIVideogames.Model.Entities
 
         [Range(1950, 2050, ErrorMessage = ApiStrings.RangeValidation)]
         public int ReleaseYear { get; set; }
-
-        public List<Videogame> Videogames { get; set; } = [];
     }
 }

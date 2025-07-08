@@ -1,5 +1,7 @@
-﻿using APIVideogames.Model.Entities;
+﻿using APIVideogames.Model.Dtos;
+using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
+using APIVideogames.Resources.Strings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIVideogames.Controllers
@@ -11,8 +13,9 @@ namespace APIVideogames.Controllers
         private readonly IPlatformRepository platformService = platformService;
 
         [HttpPost]
-        public async Task<ActionResult> Post(Platform platform)
+        public async Task<ActionResult> Post(PlatformCreationDto platformPostDto)
         {
+            var platform = platformService.GetPlatformCreation(platformPostDto);
             bool canPost = await platformService.PostPlatform(platform);
 
             if (!canPost)
@@ -20,17 +23,19 @@ namespace APIVideogames.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            var platformDto = platformService.GetPlatformDto(platform);
+
+            return CreatedAtRoute(ApiStrings.CreatedPlatform, new { id = platform.Id }, platformDto);
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Platform>> Get()
+        public async Task<IEnumerable<PlatformDto>> Get()
         {
             return await platformService.GetPlatforms();
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Platform>> Get(int id)
+        [HttpGet("{id:int}", Name = ApiStrings.CreatedPlatform)]
+        public async Task<ActionResult<PlatformDto>> Get(int id)
         {
             var platform = await platformService.GetPlatformById(id);
 
@@ -39,12 +44,16 @@ namespace APIVideogames.Controllers
                 return NotFound();
             }
 
-            return platform;
+            var platformDto = platformService.GetPlatformDto(platform);
+            
+            return platformDto;
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, Platform platform)
+        public async Task<ActionResult> Put(int id, PlatformCreationDto platformPutDto)
         {
+            var platform = platformService.GetPlatformCreation(platformPutDto);
+            platform.Id = id;
             bool canPut = await platformService.PutPlatform(id, platform);
 
             if (!canPut)

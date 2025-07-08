@@ -1,5 +1,6 @@
 ﻿using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
+using APIVideogames.Resources.Strings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIVideogames.Controllers
@@ -28,7 +29,7 @@ namespace APIVideogames.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return CreatedAtRoute(ApiStrings.CreatedVideogame, new { id = videogame.Id }, videogame);
         }
 
         [HttpGet]
@@ -50,7 +51,7 @@ namespace APIVideogames.Controllers
             return videogame;
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int}", Name = ApiStrings.CreatedVideogame)]
         public async Task<ActionResult> Put(int id, Videogame videogame)
         {
             bool platformExist = await videogameService.PlatformExist(videogame);
