@@ -2,12 +2,10 @@
 using APIVideogames.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace APIVideogames.Model.Entities
+namespace APIVideogames.Model.Dtos
 {
-    public class Videogame
+    public class VideogamePatchDto
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = ApiStrings.RequiredField)]
         [StringLength(100, ErrorMessage = ApiStrings.StringLenght)]
         [FirstCharUpperCase]
@@ -17,14 +15,7 @@ namespace APIVideogames.Model.Entities
         public int ReleaseYear { get; set; }
 
         public int PlatformId { get; set; }
-        public Platform? Platform { get; set; }
-
         public int DeveloperId { get; set; }
-        public Developer? Developer { get; set; }
-
         public int GenreId { get; set; }
-        public Genre? Genre { get; set; }
-
-        public List<Comentary> Comentaries { get; set; } = [];
     }
 }

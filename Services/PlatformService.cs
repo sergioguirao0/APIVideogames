@@ -45,7 +45,7 @@ namespace APIVideogames.Services
 
         public PlatformDto GetPlatformDto(Platform platform)
         {
-            return mapper.Map<PlatformDto>(platform);
+            return mapper.Map<PlatformWithVideogamesDto>(platform);
         }
 
         public Platform GetPlatformCreation(PlatformCreationDto platformPostDto)

@@ -58,7 +58,7 @@ namespace APIVideogames.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
@@ -78,7 +78,7 @@ namespace APIVideogames.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
         }
     }
 }

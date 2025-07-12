@@ -9,6 +9,7 @@ namespace APIVideogames.Util
         public AutoMapperProfiles()
         {
             CreateMap<Platform, PlatformDto>();
+            CreateMap<Platform, PlatformWithVideogamesDto>();
             CreateMap<PlatformCreationDto, Platform>();
 
             CreateMap<DeveloperCreationDto, Developer>();
@@ -19,6 +20,16 @@ namespace APIVideogames.Util
 
             CreateMap<VideogameCreationDto, Videogame>();
             CreateMap<Videogame, VideogameDto>();
+            CreateMap<Videogame, VideogamePatchDto>().ReverseMap();
+
+            CreateMap<Videogame, VideogameDataDto>()
+                .ForMember(dto => dto.Platform, config => config.MapFrom(ent => ent.Platform!.Name))
+                .ForMember(dto => dto.Developer, config => config.MapFrom(ent => ent.Developer!.Name))
+                .ForMember(dto => dto.Genre, config => config.MapFrom(ent => ent.Genre!.Name));
+
+            CreateMap<ComentaryCreationDto, Comentary>();
+            CreateMap<Comentary, ComentaryDto>();
+            CreateMap<Comentary, ComentaryPatchDto>().ReverseMap();
         }
     }
 }

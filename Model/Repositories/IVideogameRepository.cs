@@ -14,6 +14,8 @@ namespace APIVideogames.Model.Repositories
         Videogame GetVideogameCreation(VideogameCreationDto videogameCreationDto);
         Task<bool> DeveloperExist(Videogame videogame);
         Task<bool> GenreExist(Videogame videogame);
-        VideogameDto GetVideogameDto(Videogame videogame);
+        VideogameDataDto GetVideogameDto(Videogame videogame);
+        VideogamePatchDto GetPachVideogame(Videogame videogame);
+        Task<bool> PatchVideogame(VideogamePatchDto videogamePatchDto, Videogame videogame);
     }
 }

@@ -33,6 +33,11 @@ namespace APIVideogames.Services
             return mapper.Map<Videogame>(videogameCreationDto);
         }
 
+        public VideogamePatchDto GetPachVideogame(Videogame videogame)
+        {
+            return mapper.Map<VideogamePatchDto>(videogame);
+        }
+
         public async Task<bool> PlatformExist(Videogame videogame)
         {
             return await context.Platforms.AnyAsync(pf => pf.Id == videogame.PlatformId);
@@ -69,9 +74,9 @@ namespace APIVideogames.Services
                 .FirstOrDefaultAsync(vg => vg.Id == id);
         }
 
-        public VideogameDto GetVideogameDto(Videogame videogame)
+        public VideogameDataDto GetVideogameDto(Videogame videogame)
         {
-            return mapper.Map<VideogameDto>(videogame);
+            return mapper.Map<VideogameDataDto>(videogame);
         }
 
         public async Task<bool> PutVideogame(Videogame videogame)
@@ -100,6 +105,21 @@ namespace APIVideogames.Services
             catch (Exception e)
             {
                 logger.LogError(ApiStrings.DeleteVideogameError + e.Message);
+                return false;
+            }
+        }
+
+        public async Task<bool> PatchVideogame(VideogamePatchDto videogamePatchDto, Videogame videogame)
+        {
+            try
+            {
+                mapper.Map(videogamePatchDto, videogame);
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(ApiStrings.PatchVideogameError + e.Message);
                 return false;
             }
         }

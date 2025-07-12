@@ -2,6 +2,7 @@
 using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
 using APIVideogames.Resources.Strings;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIVideogames.Controllers
@@ -57,7 +58,7 @@ namespace APIVideogames.Controllers
         }
 
         [HttpGet("{id:int}", Name = ApiStrings.CreatedVideogame)]
-        public async Task<ActionResult<VideogameDto>> Get(int id)
+        public async Task<ActionResult<VideogameDataDto>> Get(int id)
         {
             var videogame = await videogameService.GetVideogameById(id);
 
@@ -106,7 +107,41 @@ namespace APIVideogames.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
+        }
+
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<VideogamePatchDto> patchDoc)
+        {
+            if (patchDoc is null)
+            {
+                return BadRequest();
+            }
+
+            var videogameDb = await videogameService.GetVideogameById(id);
+
+            if (videogameDb is null)
+            {
+                return NotFound();
+            }
+
+            var videogamePatchDto = videogameService.GetPachVideogame(videogameDb);
+            patchDoc.ApplyTo(videogamePatchDto, ModelState);
+            bool validPatch = TryValidateModel(videogamePatchDto);
+
+            if (!validPatch)
+            {
+                return ValidationProblem();
+            }
+
+            bool canPatch = await videogameService.PatchVideogame(videogamePatchDto, videogameDb);
+
+            if (!canPatch)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
@@ -126,7 +161,7 @@ namespace APIVideogames.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
         }
     }
 }

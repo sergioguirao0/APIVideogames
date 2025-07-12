@@ -6,8 +6,7 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddJsonOptions(options => 
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -18,6 +17,7 @@ builder.Services.AddTransient<IPlatformRepository, PlatformService>();
 builder.Services.AddTransient<IVideogameRepository, VideogameService>();
 builder.Services.AddTransient<IDeveloperRepository, DeveloperService>();
 builder.Services.AddTransient<IGenreRepository, GenreService>();
+builder.Services.AddTransient<IComentaryRepository, ComentaryService>();
 
 var app = builder.Build();
 
