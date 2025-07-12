@@ -2,6 +2,7 @@
 using APIVideogames.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace APIVideogames.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250711185153_genreTable")]
+    partial class genreTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,9 +95,6 @@ namespace APIVideogames.Migrations
                     b.Property<int>("DeveloperId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("GenreId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -110,8 +110,6 @@ namespace APIVideogames.Migrations
 
                     b.HasIndex("DeveloperId");
 
-                    b.HasIndex("GenreId");
-
                     b.HasIndex("PlatformId");
 
                     b.ToTable("Videogames");
@@ -125,12 +123,6 @@ namespace APIVideogames.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("APIVideogames.Model.Entities.Genre", "Genre")
-                        .WithMany("Videogames")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("APIVideogames.Model.Entities.Platform", "Platform")
                         .WithMany("Videogames")
                         .HasForeignKey("PlatformId")
@@ -139,17 +131,10 @@ namespace APIVideogames.Migrations
 
                     b.Navigation("Developer");
 
-                    b.Navigation("Genre");
-
                     b.Navigation("Platform");
                 });
 
             modelBuilder.Entity("APIVideogames.Model.Entities.Developer", b =>
-                {
-                    b.Navigation("Videogames");
-                });
-
-            modelBuilder.Entity("APIVideogames.Model.Entities.Genre", b =>
                 {
                     b.Navigation("Videogames");
                 });

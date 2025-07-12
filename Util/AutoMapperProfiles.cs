@@ -10,6 +10,15 @@ namespace APIVideogames.Util
         {
             CreateMap<Platform, PlatformDto>();
             CreateMap<PlatformCreationDto, Platform>();
+
+            CreateMap<DeveloperCreationDto, Developer>();
+            CreateMap<Developer, DeveloperDto>();
+
+            CreateMap<GenreCreationDto, Genre>();
+            CreateMap<Genre, GenreDto>();
+
+            CreateMap<VideogameCreationDto, Videogame>();
+            CreateMap<Videogame, VideogameDto>();
         }
     }
 }

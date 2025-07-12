@@ -53,7 +53,7 @@ namespace APIVideogames.Services
             return mapper.Map<Platform>(platformPostDto);
         }
 
-        public async Task<bool> PutPlatform(int id, Platform platform)
+        public async Task<bool> PutPlatform(Platform platform)
         {
             try
             {

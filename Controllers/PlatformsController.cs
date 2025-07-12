@@ -54,7 +54,7 @@ namespace APIVideogames.Controllers
         {
             var platform = platformService.GetPlatformCreation(platformPutDto);
             platform.Id = id;
-            bool canPut = await platformService.PutPlatform(id, platform);
+            bool canPut = await platformService.PutPlatform(platform);
 
             if (!canPut)
             {

@@ -1,4 +1,5 @@
-﻿using APIVideogames.Model.Entities;
+﻿using APIVideogames.Model.Dtos;
+using APIVideogames.Model.Entities;
 
 namespace APIVideogames.Model.Repositories
 {
@@ -6,9 +7,13 @@ namespace APIVideogames.Model.Repositories
     {
         Task<bool> PostVideogame(Videogame videogame);
         Task<bool> PlatformExist(Videogame videogame);
-        Task<IEnumerable<Videogame>> GetVideogames();
+        Task<IEnumerable<VideogameDto>> GetVideogames();
         Task<Videogame?> GetVideogameById(int id);
-        Task<bool> PutVideogame(int id, Videogame videogame);
+        Task<bool> PutVideogame(Videogame videogame);
         Task<bool> DeleteVideogame(Videogame videogame);
+        Videogame GetVideogameCreation(VideogameCreationDto videogameCreationDto);
+        Task<bool> DeveloperExist(Videogame videogame);
+        Task<bool> GenreExist(Videogame videogame);
+        VideogameDto GetVideogameDto(Videogame videogame);
     }
 }

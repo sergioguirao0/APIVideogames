@@ -8,7 +8,7 @@ namespace APIVideogames.Model.Repositories
         Task<bool> PostPlatform(Platform platform);
         Task<IEnumerable<PlatformDto>> GetPlatforms();
         Task<Platform?> GetPlatformById(int id);
-        Task<bool> PutPlatform(int id, Platform platform);
+        Task<bool> PutPlatform(Platform platform);
         Task<bool> DeletePlatform(Platform platform);
         PlatformDto GetPlatformDto(Platform platform);
         Platform GetPlatformCreation(PlatformCreationDto platformPostDto);

@@ -15,7 +15,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddTransient<IPlatformRepository, PlatformService>();
-builder.Services.AddTransient<IVideogameRepository, VideogamesService>();
+builder.Services.AddTransient<IVideogameRepository, VideogameService>();
+builder.Services.AddTransient<IDeveloperRepository, DeveloperService>();
+builder.Services.AddTransient<IGenreRepository, GenreService>();
 
 var app = builder.Build();
 

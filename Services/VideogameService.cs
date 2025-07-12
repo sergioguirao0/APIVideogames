@@ -1,15 +1,17 @@
 ﻿using APIVideogames.Data;
+using APIVideogames.Model.Dtos;
 using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
 using APIVideogames.Resources.Strings;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIVideogames.Services
 {
-    public class VideogamesService(ApplicationDbContext context, ILogger<VideogamesService> logger) : IVideogameRepository
+    public class VideogameService(ApplicationDbContext context, ILogger<VideogameService> logger, IMapper mapper) : IVideogameRepository
     {
         private readonly ApplicationDbContext context = context;
-        private readonly ILogger<VideogamesService> logger = logger;
+        private readonly ILogger<VideogameService> logger = logger;
 
         public async Task<bool> PostVideogame(Videogame videogame)
         {
@@ -26,34 +28,56 @@ namespace APIVideogames.Services
             }
         }
 
+        public Videogame GetVideogameCreation(VideogameCreationDto videogameCreationDto)
+        {
+            return mapper.Map<Videogame>(videogameCreationDto);
+        }
+
         public async Task<bool> PlatformExist(Videogame videogame)
         {
             return await context.Platforms.AnyAsync(pf => pf.Id == videogame.PlatformId);
         }
 
-        public async Task<IEnumerable<Videogame>> GetVideogames()
+        public async Task<bool> DeveloperExist(Videogame videogame)
         {
-            return await context.Videogames
+            return await context.Developers.AnyAsync(dev => dev.Id == videogame.DeveloperId);
+        }
+
+        public async Task<bool> GenreExist(Videogame videogame)
+        {
+            return await context.Genres.AnyAsync(gen => gen.Id == videogame.GenreId);
+        }
+
+        public async Task<IEnumerable<VideogameDto>> GetVideogames()
+        {
+            var videogames = await context.Videogames
                 .Include(vg => vg.Platform)
+                .Include(vg => vg.Developer)
+                .Include(vg => vg.Genre)
                 .ToListAsync();
+
+            var videogamesDto = mapper.Map<IEnumerable<VideogameDto>>(videogames);
+            return videogamesDto;
         }
 
         public async Task<Videogame?> GetVideogameById(int id)
         {
             return await context.Videogames
                 .Include(vg => vg.Platform)
+                .Include(vg => vg.Developer)
+                .Include(vg => vg.Genre)
                 .FirstOrDefaultAsync(vg => vg.Id == id);
         }
 
-        public async Task<bool> PutVideogame(int id, Videogame videogame)
+        public VideogameDto GetVideogameDto(Videogame videogame)
+        {
+            return mapper.Map<VideogameDto>(videogame);
+        }
+
+        public async Task<bool> PutVideogame(Videogame videogame)
         {
             try
             {
-                if (id != videogame.Id)
-                {
-                    return false;
-                }
-
                 context.Update(videogame);
                 await context.SaveChangesAsync();
                 return true;

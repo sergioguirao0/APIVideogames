@@ -12,5 +12,7 @@ namespace APIVideogames.Data
 
         public DbSet<Platform> Platforms { get; set; }
         public DbSet<Videogame> Videogames { get; set; }
+        public DbSet<Developer> Developers { get; set; }
+        public DbSet<Genre> Genres { get; set; }
     }
 }

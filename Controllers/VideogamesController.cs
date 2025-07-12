@@ -1,4 +1,5 @@
-﻿using APIVideogames.Model.Entities;
+﻿using APIVideogames.Model.Dtos;
+using APIVideogames.Model.Entities;
 using APIVideogames.Model.Repositories;
 using APIVideogames.Resources.Strings;
 using Microsoft.AspNetCore.Mvc;
@@ -12,13 +13,30 @@ namespace APIVideogames.Controllers
         private readonly IVideogameRepository videogameService = videogameService;
 
         [HttpPost]
-        public async Task<ActionResult> Post(Videogame videogame)
+        public async Task<ActionResult> Post(VideogameCreationDto videogameCreationDto)
         {
+            var videogame = videogameService.GetVideogameCreation(videogameCreationDto);
             bool platformExist = await videogameService.PlatformExist(videogame);
 
             if (!platformExist)
             {
-                ModelState.AddModelError(nameof(videogame.PlatformId), $"La plataforma de {videogame.PlatformId} no existe");
+                ModelState.AddModelError(nameof(videogame.PlatformId), ApiStrings.PlatformExistError);
+                return ValidationProblem();
+            }
+
+            bool developerExist = await videogameService.DeveloperExist(videogame);
+
+            if (!developerExist)
+            {
+                ModelState.AddModelError(nameof(videogame.DeveloperId), ApiStrings.DeveloperExistError);
+                return ValidationProblem();
+            }
+
+            bool genreExist = await videogameService.GenreExist(videogame);
+
+            if (!genreExist)
+            {
+                ModelState.AddModelError(nameof(videogame.GenreId), ApiStrings.GenreExistError);
                 return ValidationProblem();
             }
 
@@ -29,17 +47,17 @@ namespace APIVideogames.Controllers
                 return BadRequest();
             }
 
-            return CreatedAtRoute(ApiStrings.CreatedVideogame, new { id = videogame.Id }, videogame);
+            return CreatedAtRoute(ApiStrings.CreatedVideogame, new { id = videogame.Id }, videogameCreationDto);
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Videogame>> Get()
+        public async Task<IEnumerable<VideogameDto>> Get()
         {
             return await videogameService.GetVideogames();
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Videogame>> Get(int id)
+        [HttpGet("{id:int}", Name = ApiStrings.CreatedVideogame)]
+        public async Task<ActionResult<VideogameDto>> Get(int id)
         {
             var videogame = await videogameService.GetVideogameById(id);
 
@@ -48,21 +66,40 @@ namespace APIVideogames.Controllers
                 return NotFound();
             }
 
-            return videogame;
+            var videogameDto = videogameService.GetVideogameDto(videogame);
+            return videogameDto;
         }
 
-        [HttpPut("{id:int}", Name = ApiStrings.CreatedVideogame)]
-        public async Task<ActionResult> Put(int id, Videogame videogame)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, VideogameCreationDto videogameCreationDto)
         {
+            var videogame = videogameService.GetVideogameCreation(videogameCreationDto);
             bool platformExist = await videogameService.PlatformExist(videogame);
 
             if (!platformExist)
             {
-                ModelState.AddModelError(nameof(videogame.PlatformId), $"La plataforma de {videogame.PlatformId} no existe");
+                ModelState.AddModelError(nameof(videogame.PlatformId), ApiStrings.PlatformExistError);
                 return ValidationProblem();
             }
 
-            bool canPut = await videogameService.PutVideogame(id, videogame);
+            bool developerExist = await videogameService.DeveloperExist(videogame);
+
+            if (!developerExist)
+            {
+                ModelState.AddModelError(nameof(videogame.DeveloperId), ApiStrings.DeveloperExistError);
+                return ValidationProblem();
+            }
+
+            bool genreExist = await videogameService.GenreExist(videogame);
+
+            if (!genreExist)
+            {
+                ModelState.AddModelError(nameof(videogame.GenreId), ApiStrings.GenreExistError);
+                return ValidationProblem();
+            }
+
+            videogame.Id = id;
+            bool canPut = await videogameService.PutVideogame(videogame);
 
             if (!canPut)
             {
