@@ -16,8 +16,7 @@ namespace APIVideogames.Model.Entities
         [Range(1950, 2050, ErrorMessage = ApiStrings.RangeValidation)]
         public int ReleaseYear { get; set; }
 
-        public int PlatformId { get; set; }
-        public Platform? Platform { get; set; }
+        public List<VideogamePlatform> Platforms { get; set; } = [];
 
         public int DeveloperId { get; set; }
         public Developer? Developer { get; set; }

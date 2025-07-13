@@ -33,14 +33,22 @@ namespace APIVideogames.Services
             return mapper.Map<Videogame>(videogameCreationDto);
         }
 
-        public VideogamePatchDto GetPachVideogame(Videogame videogame)
+        public VideogamePatchDto GetPatchVideogame(Videogame videogame)
         {
             return mapper.Map<VideogamePatchDto>(videogame);
         }
 
-        public async Task<bool> PlatformExist(Videogame videogame)
+        public async Task<List<int>> PlatformExist(VideogameCreationDto videogameCreationDto)
         {
-            return await context.Platforms.AnyAsync(pf => pf.Id == videogame.PlatformId);
+            return await context.Platforms.Where(pt => videogameCreationDto.PlatformsId.Contains(pt.Id))
+                .Select(pt => pt.Id).ToListAsync();
+        }
+
+        public async Task<List<Platform>> GetPlatformsByIds(List<int> platformIds)
+        {
+            return await context.Platforms
+                .Where(p => platformIds.Contains(p.Id))
+                .ToListAsync();
         }
 
         public async Task<bool> DeveloperExist(Videogame videogame)
@@ -56,7 +64,7 @@ namespace APIVideogames.Services
         public async Task<IEnumerable<VideogameDto>> GetVideogames()
         {
             var videogames = await context.Videogames
-                .Include(vg => vg.Platform)
+                .Include(vg => vg.Platforms)
                 .Include(vg => vg.Developer)
                 .Include(vg => vg.Genre)
                 .ToListAsync();
@@ -68,7 +76,7 @@ namespace APIVideogames.Services
         public async Task<Videogame?> GetVideogameById(int id)
         {
             return await context.Videogames
-                .Include(vg => vg.Platform)
+                .Include(vg => vg.Platforms)
                 .Include(vg => vg.Developer)
                 .Include(vg => vg.Genre)
                 .FirstOrDefaultAsync(vg => vg.Id == id);
@@ -79,11 +87,10 @@ namespace APIVideogames.Services
             return mapper.Map<VideogameDataDto>(videogame);
         }
 
-        public async Task<bool> PutVideogame(Videogame videogame)
+        public async Task<bool> PutVideogame()
         {
             try
             {
-                context.Update(videogame);
                 await context.SaveChangesAsync();
                 return true;
             }
@@ -121,6 +128,17 @@ namespace APIVideogames.Services
             {
                 logger.LogError(ApiStrings.PatchVideogameError + e.Message);
                 return false;
+            }
+        }
+
+        public void VideogamePlatformOrder(Videogame videogame)
+        {
+            if (videogame.Platforms is not null)
+            {
+                for (int i = 0; i < videogame.Platforms.Count; i++)
+                {
+                    videogame.Platforms[i].Order = i;
+                }
             }
         }
     }

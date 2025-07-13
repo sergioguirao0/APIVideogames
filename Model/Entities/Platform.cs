@@ -16,6 +16,6 @@ namespace APIVideogames.Model.Entities
         [Range(1950, 2050, ErrorMessage = ApiStrings.RangeValidation)]
         public int ReleaseYear { get; set; }
 
-        public List<Videogame> Videogames { get; set; } = [];
+        public List<VideogamePlatform> Videogames { get; set; } = [];
     }
 }

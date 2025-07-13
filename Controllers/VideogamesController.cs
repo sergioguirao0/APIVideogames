@@ -16,14 +16,24 @@ namespace APIVideogames.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(VideogameCreationDto videogameCreationDto)
         {
-            var videogame = videogameService.GetVideogameCreation(videogameCreationDto);
-            bool platformExist = await videogameService.PlatformExist(videogame);
-
-            if (!platformExist)
+            if (videogameCreationDto.PlatformsId is null || videogameCreationDto.PlatformsId.Count == 0)
             {
-                ModelState.AddModelError(nameof(videogame.PlatformId), ApiStrings.PlatformExistError);
+                ModelState.AddModelError(nameof(videogameCreationDto.PlatformsId), ApiStrings.NoPlatformsInVideogameError);
                 return ValidationProblem();
             }
+
+            var platformsIdExist = await videogameService.PlatformExist(videogameCreationDto);
+
+            if (platformsIdExist.Count != videogameCreationDto.PlatformsId.Count)
+            {
+                var inexistentPlatforms = videogameCreationDto.PlatformsId.Except(platformsIdExist);
+                var inexistentPlatformsString = string.Join(",", inexistentPlatforms);
+                var errorMessage = ApiStrings.InexistentPlatformsError + inexistentPlatformsString;
+                ModelState.AddModelError(nameof(videogameCreationDto.PlatformsId), errorMessage);
+                return ValidationProblem();
+            }
+
+            var videogame = videogameService.GetVideogameCreation(videogameCreationDto);
 
             bool developerExist = await videogameService.DeveloperExist(videogame);
 
@@ -40,6 +50,8 @@ namespace APIVideogames.Controllers
                 ModelState.AddModelError(nameof(videogame.GenreId), ApiStrings.GenreExistError);
                 return ValidationProblem();
             }
+
+            videogameService.VideogamePlatformOrder(videogame);
 
             bool canPost = await videogameService.PostVideogame(videogame);
 
@@ -74,13 +86,28 @@ namespace APIVideogames.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, VideogameCreationDto videogameCreationDto)
         {
-            var videogame = videogameService.GetVideogameCreation(videogameCreationDto);
-            bool platformExist = await videogameService.PlatformExist(videogame);
-
-            if (!platformExist)
+            if (videogameCreationDto.PlatformsId is null || videogameCreationDto.PlatformsId.Count == 0)
             {
-                ModelState.AddModelError(nameof(videogame.PlatformId), ApiStrings.PlatformExistError);
+                ModelState.AddModelError(nameof(videogameCreationDto.PlatformsId), ApiStrings.NoPlatformsInVideogameError);
                 return ValidationProblem();
+            }
+
+            var platformsIdExist = await videogameService.PlatformExist(videogameCreationDto);
+
+            if (platformsIdExist.Count != videogameCreationDto.PlatformsId.Count)
+            {
+                var inexistentPlatforms = videogameCreationDto.PlatformsId.Except(platformsIdExist);
+                var inexistentPlatformsString = string.Join(",", inexistentPlatforms);
+                var errorMessage = ApiStrings.InexistentPlatformsError + inexistentPlatformsString;
+                ModelState.AddModelError(nameof(videogameCreationDto.PlatformsId), errorMessage);
+                return ValidationProblem();
+            }
+
+            var videogame = await videogameService.GetVideogameById(id);
+
+            if (videogame is null)
+            {
+                return NotFound();
             }
 
             bool developerExist = await videogameService.DeveloperExist(videogame);
@@ -99,8 +126,9 @@ namespace APIVideogames.Controllers
                 return ValidationProblem();
             }
 
-            videogame.Id = id;
-            bool canPut = await videogameService.PutVideogame(videogame);
+            videogame = videogameService.GetVideogameCreation(videogameCreationDto);
+            videogameService.VideogamePlatformOrder(videogame);
+            bool canPut = await videogameService.PutVideogame();
 
             if (!canPut)
             {
@@ -125,7 +153,7 @@ namespace APIVideogames.Controllers
                 return NotFound();
             }
 
-            var videogamePatchDto = videogameService.GetPachVideogame(videogameDb);
+            var videogamePatchDto = videogameService.GetPatchVideogame(videogameDb);
             patchDoc.ApplyTo(videogamePatchDto, ModelState);
             bool validPatch = TryValidateModel(videogamePatchDto);
 

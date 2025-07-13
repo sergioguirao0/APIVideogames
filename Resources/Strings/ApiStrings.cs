@@ -41,5 +41,7 @@ namespace APIVideogames.Resources.Strings
         public const string PlatformExistError = "La plataforma indicada no se encuentra en la base de datos";
         public const string DeveloperExistError = "El desarrollador indicada no se encuentra en la base de datos";
         public const string GenreExistError = "El género indicado no se encuentra en la base de datos";
+        public const string NoPlatformsInVideogameError = "No se puede crear un videojuego sin plataformas";
+        public const string InexistentPlatformsError = "Las siguientes plataformas no existen: ";
     }
 }

@@ -15,7 +15,7 @@ namespace APIVideogames.Model.Dtos
         [Range(1950, 2050, ErrorMessage = ApiStrings.RangeValidation)]
         public int ReleaseYear { get; set; }
 
-        public int PlatformId { get; set; }
+        public List<int> PlatformsId { get; set; } = [];
         public int DeveloperId { get; set; }
         public int GenreId { get; set; }
     }

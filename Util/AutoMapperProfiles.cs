@@ -18,14 +18,17 @@ namespace APIVideogames.Util
             CreateMap<GenreCreationDto, Genre>();
             CreateMap<Genre, GenreDto>();
 
-            CreateMap<VideogameCreationDto, Videogame>();
+            CreateMap<VideogameCreationDto, Videogame>()
+                .ForMember(ent => ent.Platforms, config => config.MapFrom(dto => 
+                dto.PlatformsId.Select(id => new VideogamePlatform { PlatformId = id })));
+
             CreateMap<Videogame, VideogameDto>();
             CreateMap<Videogame, VideogamePatchDto>().ReverseMap();
 
-            CreateMap<Videogame, VideogameDataDto>()
+            /*CreateMap<Videogame, VideogameDataDto>()
                 .ForMember(dto => dto.Platform, config => config.MapFrom(ent => ent.Platform!.Name))
                 .ForMember(dto => dto.Developer, config => config.MapFrom(ent => ent.Developer!.Name))
-                .ForMember(dto => dto.Genre, config => config.MapFrom(ent => ent.Genre!.Name));
+                .ForMember(dto => dto.Genre, config => config.MapFrom(ent => ent.Genre!.Name));*/
 
             CreateMap<ComentaryCreationDto, Comentary>();
             CreateMap<Comentary, ComentaryDto>();
